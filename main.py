@@ -19,7 +19,12 @@ def main():
     X,y = data_loader.split_features_and_target(df_remove_hc, "exam_score")
     
     # Split train, val, test datasets
-    X_train, y_train, X_val, y_val, X_test, y_test = data_loader.train_test_split(X,y,val_size=0.2,test_size=0.2)
+    X_train, y_train, X_val, y_val, X_test, y_test = data_loader.train_test_split(X,y,test_size=0.2, val_size=0.2)
 
+    print("Preprocessing complete!!\n")
+    print(f"Found {X_train.shape[0]} registers in train dataset")
+    print(f"Found {X_val.shape[0]} registers in train dataset")
+    print(f"Found {X_test.shape[0]} registers in train dataset")
+    
 if __name__ == "__main__":
     main()

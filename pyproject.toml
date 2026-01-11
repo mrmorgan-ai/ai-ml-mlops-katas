@@ -4,4 +4,15 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "imblearn>=0.0",
+    "lightgbm>=4.6.0",
+    "matplotlib>=3.10.8",
+    "mlflow>=3.8.1",
+    "numpy>=2.4.1",
+    "pandas>=2.3.3",
+    "pandera>=0.28.1",
+    "scikit-learn>=1.8.0",
+    "seaborn>=0.13.2",
+    "xgboost>=3.1.3",
+]

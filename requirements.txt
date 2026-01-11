@@ -1,4 +1,5 @@
 mlflow
+pandera
 
 scikit-learn
 xgboost
