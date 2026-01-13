@@ -11,3 +11,5 @@ numpy
 
 matplotlib
 seaborn
+
+pytest
