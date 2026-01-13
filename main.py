@@ -1,7 +1,10 @@
 import pandas as pd
 import numpy as np
+import pandera as pa
+from pandera.errors import SchemaError
 
 from src.pipelines.preprocessing import MLDataLoader
+from src.pipelines.data_validation import validate_transactions, check_feature_drift
 
 def main():
     data_path = r"C:\Users\jhoni\Documents\LooperAI\repositorios\ai-ml-mlops-katas\data\raw\Exam_Score_Prediction.csv"
