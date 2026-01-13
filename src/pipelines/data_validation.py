@@ -1,5 +1,5 @@
 import pandera as pa
-from pandera import Column, Check, DataFrameSchema
+from pandera.pandas import Column, Check, DataFrameSchema
 import pandas as pd
 import numpy as np
 
