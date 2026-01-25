@@ -23,8 +23,9 @@ class TestTransactionValidation:
         return df
     
     def test_valid_data_passes(self, valid_transactions):
-        result = valid_transactions(valid_transactions)
+        result = validate_transactions(valid_transactions)
         assert len(result) == 3
+        
 if __name__ == "__main__":
     test_validation = TestTransactionValidation()
     

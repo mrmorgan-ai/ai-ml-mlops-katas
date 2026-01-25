@@ -4,7 +4,7 @@ import pandera as pa
 from pandera.errors import SchemaError
 
 from src.pipelines.preprocessing import MLDataLoader
-from src.pipelines.data_validation import validate_transactions, check_feature_drift
+from src.pipelines.data_validation import validate_exam_data, check_feature_drift
 
 def main():
     data_path = r"C:\Users\jhoni\Documents\LooperAI\repositorios\ai-ml-mlops-katas\data\raw\Exam_Score_Prediction.csv"
@@ -15,6 +15,13 @@ def main():
     # Upload raw data
     df_raw = data_loader.load_data()
 
+    # Validate raw data
+    try:
+        validated = validate_exam_data(df_raw)
+        print("Validation succeed!!")
+    except SchemaError as e:
+        print(f"Validation failed: {e}")
+        
     # Remove high cardinality
     df_remove_hc = data_loader.remove_high_cardinality(df_raw)
     
