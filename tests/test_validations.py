@@ -11,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 print(os.getcwd())
 
 from src.pipelines.preprocessing import MLDataLoader
-from src.pipelines.data_validation import validate_transactions, check_feature_drift
+from src.pipelines.data_validation import validate_exam_data, check_feature_drift
 
 data_path = r"C:\Users\jhoni\Documents\LooperAI\repositorios\ai-ml-mlops-katas\data\raw\Exam_Score_Prediction.csv"
 data_loader = MLDataLoader(data_path)
@@ -23,7 +23,7 @@ class TestTransactionValidation:
         return df
     
     def test_valid_data_passes(self, valid_transactions):
-        result = validate_transactions(valid_transactions)
+        result = validate_exam_data(valid_transactions)
         assert len(result) == 3
         
 if __name__ == "__main__":
