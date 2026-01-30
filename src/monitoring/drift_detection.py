@@ -1,6 +1,7 @@
 import math
 import pandas as pd
 import numpy as np
+from scipy import stats
 
 def calculate_psi(
     reference: pd.Series,
@@ -52,3 +53,59 @@ def calculate_psi(
     psi = np.sum((curr_pct - ref_pct) * np.log(curr_pct/ref_pct))   
     
     return psi
+
+def check_categorical_drif(
+    reference_df: pd.DataFrame,
+    current_df: pd.DataFrame,
+    categorical_columns: list,
+    pvalue_threshold: float = 0.05
+)-> dict:
+    """
+    Check for drift in categorical features using Chi-squared test.
+    
+    Parameters
+    ----------
+    reference_df : pd.DataFrame
+        Training/historical data.
+    current_df : pd.DataFrame
+        New/production data.
+    categorical_columns : list
+        Columns to check.
+    pvalue_threshold : float
+        P-value below which drift is flagged.
+    
+    Returns
+    -------
+    dict
+        Drift analysis for each column.    
+    """
+    drift_report = {}
+    
+    for col in categorical_columns:
+        # Get value counts
+        ref_counts = reference_df[col].value_counts()
+        curr_counts = current_df[col].value_counts()
+        
+        # Handle new/missing categories
+        all_categories = set(ref_counts.index) | set(curr_counts.index)
+        ref_counts = ref_counts.reindex(all_categories, fill_value=0)
+        curr_counts = curr_counts.reindex(all_categories, fill_value=0)
+    
+        # Chi-Square Test
+        # Expect counts = references proportions x current total
+        # References proportions = values / values.sum()
+        expected = ref_counts.values * (curr_counts.sum() / ref_counts.sum())
+        
+        chi2_stat, p_value = stats.chisquare(
+            f_obs = curr_counts.values,
+            f_exp = expected
+        )
+        
+        drift_report[col] = {
+            'chi2_statistics': chi2_stat,
+            'p_value': p_value,
+            'drift_detected': p_value < pvalue_threshold,
+            'reference_distribution': (ref_counts / ref_counts.sum()).to_dict(),
+            'current_distribution': (curr_counts / curr_counts.sum()).to_dict()
+        }
+    return drift_report
