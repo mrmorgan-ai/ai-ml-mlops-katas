@@ -1,7 +1,11 @@
+import sys
 import pandera as pa
 from pandera.pandas import Column, Check, DataFrameSchema
+from pandera.errors import SchemaError
 import pandas as pd
 import numpy as np
+
+from preprocessing import MLDataLoader
 
 exam_data_schema = DataFrameSchema(
     # NUMERIC COLUMNS
@@ -157,3 +161,35 @@ def check_feature_drift(
         "reference_mean": ref_mean,
         "current_mean": curr_mean
     }
+
+def main():
+    print("Data Schema Validation")
+    
+    # Load data
+    data_path = r"C:\Users\jhoni\Documents\LooperAI\repositorios\ai-ml-mlops-katas\data\raw\Exam_Score_Prediction.csv"
+    
+    data_loader = MLDataLoader(data_path=data_path)
+    
+    print(f"Loading data from: {data_path} ...")
+    try:
+        df = data_loader.load_data()
+        print(f"\nData uploades succesfully with {len(df)} registers")
+    except FileNotFoundError:
+        print(f"ERROR: data file not found in {data_path}")
+        sys.exit(1)
+
+
+    print("Validation schema ...")
+    try:
+        validated = validate_exam_data(df=df)
+        print(f"Schema validation PASSED!!")
+        print(f"{len(validated):,} rows validated")
+        print(f"{len(validated.columns)} columns")
+        sys.exit(0)
+    except SchemaError as e:
+        print(f"Schema validation FAILED")
+        print(f"Error details: {e}")
+        sys.exit(1)
+        
+    if __name__ == "__main__":
+        main()
