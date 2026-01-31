@@ -11,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 print(os.getcwd())
 
 from src.pipelines.preprocessing import MLDataLoader
-from src.pipelines.data_validation import validate_exam_data, check_feature_drift
+from src.pipelines.data_validation import validate_exam_data
 
 data_path = r"C:\Users\jhoni\Documents\LooperAI\repositorios\ai-ml-mlops-katas\data\raw\Exam_Score_Prediction.csv"
 data_loader = MLDataLoader(data_path)

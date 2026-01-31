@@ -1,7 +1,11 @@
-import math
+import json
+import sys
 import pandas as pd
 import numpy as np
+import argparse
 from scipy import stats
+
+from pipelines.preprocessing import MLDataLoader
 
 def calculate_psi(
     reference: pd.Series,
@@ -23,9 +27,6 @@ def calculate_psi(
     float
         PSI value
     """
-    sorted_reference = reference.sort_values(ascending=True)
-    sorted_current = current.sort_values(ascending=True)
-    
     # Handle edge cases
     if len(reference) == 0 or len(current) == 0:
         return 0.0
@@ -53,6 +54,35 @@ def calculate_psi(
     psi = np.sum((curr_pct - ref_pct) * np.log(curr_pct/ref_pct))   
     
     return psi
+
+# For statistical validation (data drift detection)
+def check_numerical_drift(
+    reference: pd.Series,
+    current: pd.Series,
+    threshold: float = 0.1
+) -> dict:
+    """Compare distributions using PSI (Population Stability Index).
+    
+    PSI < 0.1: No significant change
+    0.1 <= PSI < 0.25: Moderate change, investigate
+    PSI >= 0.25: Significant change, retrain
+    """
+    # Simplified drift calculation (Z score)
+    ref_mean, ref_std = reference.mean(), reference.std()
+    curr_mean, curr_std = current.mean(), current.std()
+    
+    mean_shift = abs(curr_mean - ref_mean) / (ref_std + 1e-10)
+    
+    # Calculate psi
+    psi = calculate_psi(current=current, reference=reference)
+    return {
+        "mean_shift_zscore": mean_shift,
+        "psi": psi,
+        "drift_detected_zcore": mean_shift > threshold,
+        "drift_detected_psi": psi > threshold,
+        "reference_mean": ref_mean,
+        "current_mean": curr_mean
+    }
 
 def check_categorical_drif(
     reference_df: pd.DataFrame,
@@ -109,3 +139,55 @@ def check_categorical_drif(
             'current_distribution': (curr_counts / curr_counts.sum()).to_dict()
         }
     return drift_report
+
+def main():
+    parser = argparse.ArgumentParser(description="Check data drift")
+    parser.add_argument("--reference", required=True, help="Reference data json path")
+    parser.add_argument("--current", required=True, help="Current data csv path")
+    parser.add_argument("--threshold", type=float, default=0.25, help="psi threshold")
+    args = parser.parse_args()
+    
+    print("Data drift detection!!")
+   
+    with open(args.reference) as f:
+       reference_stats = json.load(f)
+       
+    # load current data
+    data_path = r"C:\Users\jhoni\Documents\LooperAI\repositorios\ai-ml-mlops-katas\data\raw\Exam_Score_Prediction.csv"
+    data_loader = MLDataLoader(data_path=data_path)
+    current_df = data_loader.load_data()
+    
+    numeric_cols = ['age', 'study_hours', 'class_attendance', 'sleep_hours']
+    categorical_cols = ['gender', 'course', 'study_method']
+    
+    drift_detected = False
+    
+    # Check numerical drift
+    print("Checking numerical drift ...")
+    for col in numeric_cols:
+        drift_stats = check_numerical_drift(
+            current=current_df[col],
+            reference=pd.Series(reference_stats.get(col)),
+            threshold=args.threshold
+        )
+        
+        is_drift = drift_stats.get("drift_detected_psi",0.0)
+        psi = drift_stats.get("psi")
+                
+        status = "DRIFT" if is_drift else "OK"
+        print(f"{col}: psi={psi:2f} [{status}]")
+        
+        if is_drift:
+            drift_detected = True
+    
+    print("SUMMARY")
+    if drift_detected:
+        print("DRIFT DETECTED - Analyze deeper")
+        sys.exit(1)
+        
+    else:
+        print("No significant drift detected")
+        sys.exit(0)
+
+if __name__ == "__main__":
+    main()

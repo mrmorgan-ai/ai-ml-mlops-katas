@@ -137,31 +137,6 @@ def validate_exam_data(df: pd.DataFrame) -> pd.DataFrame:
     """
     return exam_data_schema.validate(df)
 
-# For statistical validation (data drift detection)
-def check_feature_drift(
-    reference: pd.Series,
-    current: pd.Series,
-    threshold: float = 0.1
-) -> dict:
-    """Compare distributions using PSI (Population Stability Index).
-    
-    PSI < 0.1: No significant change
-    0.1 <= PSI < 0.25: Moderate change, investigate
-    PSI >= 0.25: Significant change, retrain
-    """
-    # Simplified PSI calculation
-    ref_mean, ref_std = reference.mean(), reference.std()
-    curr_mean, curr_std = current.mean(), current.std()
-    
-    mean_shift = abs(curr_mean - ref_mean) / (ref_std + 1e-10)
-    
-    return {
-        "mean_shift_zscore": mean_shift,
-        "drift_detected": mean_shift > threshold,
-        "reference_mean": ref_mean,
-        "current_mean": curr_mean
-    }
-
 def main():
     print("Data Schema Validation")
     
