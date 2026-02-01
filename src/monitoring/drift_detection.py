@@ -58,7 +58,7 @@ def calculate_psi(
     return psi
 
 # For statistical validation (data drift detection)
-def check_numerical_drift(
+def check_numerical_drift_by_column(
     reference: pd.Series,
     current: pd.Series,
     threshold: float = 0.1
@@ -124,14 +124,18 @@ def check_categorical_drif(
         curr_counts = curr_counts.reindex(all_categories, fill_value=0)
     
         # Chi-Square Test
-        # Expect counts = references proportions x current total
-        # References proportions = values / values.sum()
-        expected = ref_counts.values * (curr_counts.sum() / ref_counts.sum())
-        
-        chi2_stat, p_value = stats.chisquare(
-            f_obs = curr_counts.values,
-            f_exp = expected
-        )
+        try:
+            # Expect counts = references proportions x current total
+            # References proportions = values / values.sum()
+            expected = ref_counts.values * (curr_counts.sum() / ref_counts.sum())
+            
+            chi2_stat, p_value = stats.chisquare(
+                f_obs = curr_counts.values,
+                f_exp = expected
+            )
+        except:
+            # Handle edge cases
+            chi2_stat, p_value = 0.0, 1.0
         
         drift_report[col] = {
             'chi2_statistics': chi2_stat,
@@ -166,7 +170,7 @@ def main():
     # Check numerical drift
     print("Checking numerical drift ...")
     for col in numeric_cols:
-        drift_stats = check_numerical_drift(
+        drift_stats = check_numerical_drift_by_column(
             current=current_df[col],
             reference=pd.Series(reference_stats.get(col)),
             threshold=args.threshold

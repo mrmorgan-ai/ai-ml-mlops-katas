@@ -11,7 +11,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 print(os.getcwd())
 
 from src.pipelines.preprocessing import MLDataPreprocessor
-from src.pipelines.data_validation import validate_exam_data
+from src.monitoring.data_validation import validate_exam_data
 
 from config.config import DATA_PATH
 
