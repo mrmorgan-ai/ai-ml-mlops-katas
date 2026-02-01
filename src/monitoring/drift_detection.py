@@ -5,7 +5,7 @@ import numpy as np
 import argparse
 from scipy import stats
 
-from pipelines.preprocessing import MLDataLoader
+from pipelines.preprocessing import MLDataPreprocessor
 
 def calculate_psi(
     reference: pd.Series,
@@ -154,7 +154,7 @@ def main():
        
     # load current data
     data_path = r"C:\Users\jhoni\Documents\LooperAI\repositorios\ai-ml-mlops-katas\data\raw\Exam_Score_Prediction.csv"
-    data_loader = MLDataLoader(data_path=data_path)
+    data_loader = MLDataPreprocessor(data_path=data_path)
     current_df = data_loader.load_data()
     
     numeric_cols = ['age', 'study_hours', 'class_attendance', 'sleep_hours']

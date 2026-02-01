@@ -4,10 +4,14 @@ import pandas as pd
 import numpy as np
 
 from typing import Dict, Tuple, List, Any
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 
-class MLDataLoader:
+from sklearn.compose import ColumnTransformer
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+
+from config.config import NUMERIC_FEATURES, CATEGORICAL_FEATURES
+
+class MLDataPreprocessor:
     def __init__(self, data_path: str, random_state=42):
         self.data_path = data_path
         self.random_state = random_state
@@ -36,6 +40,46 @@ class MLDataLoader:
                 cols_to_keep.append(col)
         return df[cols_to_keep]
     
+    def build_columns_preprocessor(self)->ColumnTransformer:
+        """
+        Build the preprocessing step using ColumnTransformer.
+        
+        Returns
+        -------
+        ColumnTransformer
+            Configured preprocessing pipeline
+        """
+        # numeric transformations
+        ## During fit: learns mean and std of each column
+        ## During transform: applies (x - mean) / std
+        numeric_transformer = self.scaler
+        
+        # Categorical transformations
+        categorical_transformer = OneHotEncoder(
+            handle_unknown='ignore',
+            # If new category appears during prediction:
+            # 'ignore': encode as zeros
+            # 'error': raise exception
+            
+            sparse_output=False
+            # False: regular numpy array (easier to debug)
+            # True: sparse matrix (memory efficient)
+        )
+        
+        # Combine with ColumnTransformer
+        columns_preprocessor = ColumnTransformer(
+            transformers=[
+                ('num', numeric_transformer, NUMERIC_FEATURES),
+                ('cat', categorical_transformer, CATEGORICAL_FEATURES)
+            ],
+            remainder='drop'
+            # What to do with unlisted columns:
+            # 'drop': remove them (safest)
+            # 'passthrough': keep unchanged
+        )
+        return columns_preprocessor
+        
+        
     def split_features_and_target(self,
         df: pd.DataFrame,
         target_col_name: str

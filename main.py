@@ -3,14 +3,14 @@ import numpy as np
 import pandera as pa
 from pandera.errors import SchemaError
 
-from src.pipelines.preprocessing import MLDataLoader
+from src.pipelines.preprocessing import MLDataPreprocessor
 from src.pipelines.data_validation import validate_exam_data, check_feature_drift
 
 def main():
     data_path = r"C:\Users\jhoni\Documents\LooperAI\repositorios\ai-ml-mlops-katas\data\raw\Exam_Score_Prediction.csv"
     
     # Initialize loader
-    data_loader = MLDataLoader(data_path)
+    data_loader = MLDataPreprocessor(data_path)
     
     # Upload raw data
     df_raw = data_loader.load_data()

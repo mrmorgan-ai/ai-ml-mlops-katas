@@ -10,11 +10,11 @@ from pandera.errors import SchemaError
 sys.path.insert(0, str(Path(__file__).parent.parent))
 print(os.getcwd())
 
-from src.pipelines.preprocessing import MLDataLoader
+from src.pipelines.preprocessing import MLDataPreprocessor
 from src.pipelines.data_validation import validate_exam_data
 
 data_path = r"C:\Users\jhoni\Documents\LooperAI\repositorios\ai-ml-mlops-katas\data\raw\Exam_Score_Prediction.csv"
-data_loader = MLDataLoader(data_path)
+data_loader = MLDataPreprocessor(data_path)
 
 class TestTransactionValidation:
     @pytest.fixture

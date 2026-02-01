@@ -5,7 +5,7 @@ from pandera.errors import SchemaError
 import pandas as pd
 import numpy as np
 
-from preprocessing import MLDataLoader
+from preprocessing import MLDataPreprocessor
 
 exam_data_schema = DataFrameSchema(
     # NUMERIC COLUMNS
@@ -143,7 +143,7 @@ def main():
     # Load data
     data_path = r"C:\Users\jhoni\Documents\LooperAI\repositorios\ai-ml-mlops-katas\data\raw\Exam_Score_Prediction.csv"
     
-    data_loader = MLDataLoader(data_path=data_path)
+    data_loader = MLDataPreprocessor(data_path=data_path)
     
     print(f"Loading data from: {data_path} ...")
     try:
