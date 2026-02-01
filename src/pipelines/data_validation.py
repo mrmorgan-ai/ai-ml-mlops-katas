@@ -7,6 +7,8 @@ import numpy as np
 
 from preprocessing import MLDataPreprocessor
 
+from config.config import DATA_PATH
+
 exam_data_schema = DataFrameSchema(
     # NUMERIC COLUMNS
     columns={
@@ -141,16 +143,14 @@ def main():
     print("Data Schema Validation")
     
     # Load data
-    data_path = r"C:\Users\jhoni\Documents\LooperAI\repositorios\ai-ml-mlops-katas\data\raw\Exam_Score_Prediction.csv"
+    data_loader = MLDataPreprocessor(DATA_PATH)
     
-    data_loader = MLDataPreprocessor(data_path=data_path)
-    
-    print(f"Loading data from: {data_path} ...")
+    print(f"Loading data from: {DATA_PATH} ...")
     try:
         df = data_loader.load_data()
         print(f"\nData uploades succesfully with {len(df)} registers")
     except FileNotFoundError:
-        print(f"ERROR: data file not found in {data_path}")
+        print(f"ERROR: data file not found in {DATA_PATH}")
         sys.exit(1)
 
 

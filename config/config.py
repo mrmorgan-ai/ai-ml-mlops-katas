@@ -26,3 +26,5 @@ CATEGORICAL_FEATURES = [
     ]
 
 DATA_PATH = r"C:\Users\jhoni\Documents\LooperAI\repositorios\ai-ml-mlops-katas\data\raw\Exam_Score_Prediction.csv"
+
+ID_PATTERNS = ['_id', 'id_', 'student_id', 'index', 'key']

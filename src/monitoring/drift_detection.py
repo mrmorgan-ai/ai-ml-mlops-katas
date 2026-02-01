@@ -7,6 +7,8 @@ from scipy import stats
 
 from pipelines.preprocessing import MLDataPreprocessor
 
+from config.config import DATA_PATH
+
 def calculate_psi(
     reference: pd.Series,
     current: pd.Series,
@@ -153,8 +155,7 @@ def main():
        reference_stats = json.load(f)
        
     # load current data
-    data_path = r"C:\Users\jhoni\Documents\LooperAI\repositorios\ai-ml-mlops-katas\data\raw\Exam_Score_Prediction.csv"
-    data_loader = MLDataPreprocessor(data_path=data_path)
+    data_loader = MLDataPreprocessor(DATA_PATH)
     current_df = data_loader.load_data()
     
     numeric_cols = ['age', 'study_hours', 'class_attendance', 'sleep_hours']

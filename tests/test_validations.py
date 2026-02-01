@@ -13,8 +13,9 @@ print(os.getcwd())
 from src.pipelines.preprocessing import MLDataPreprocessor
 from src.pipelines.data_validation import validate_exam_data
 
-data_path = r"C:\Users\jhoni\Documents\LooperAI\repositorios\ai-ml-mlops-katas\data\raw\Exam_Score_Prediction.csv"
-data_loader = MLDataPreprocessor(data_path)
+from config.config import DATA_PATH
+
+data_loader = MLDataPreprocessor(DATA_PATH)
 
 class TestTransactionValidation:
     @pytest.fixture
