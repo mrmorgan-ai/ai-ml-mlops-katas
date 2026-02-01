@@ -62,7 +62,7 @@ class ModelArtifact:
 
 class ExamScorePipeline:
     """
-    End-to-end fraud detection pipeline.
+    End-to-end exam score prediction
     
     This class encapsulates the complete ML workflow:
     1. PREPROCESSING
@@ -108,7 +108,7 @@ class ExamScorePipeline:
             Hyperparameters to customize the model.
             Any parameter not specified uses the default.
             
-            Available parameters:
+            Available hyperparameters:
             - n_estimators: Number of trees (default: 100)
             - max_depth: Maximum tree depth (default: 15)
             - min_samples_split: Min samples to split (default: 5)
