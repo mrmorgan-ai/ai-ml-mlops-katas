@@ -4,8 +4,9 @@ import pandas as pd
 import numpy as np
 import argparse
 from scipy import stats
+from typing import List, Optional
 
-from pipelines.preprocessing import MLDataPreprocessor
+from ..pipelines.preprocessing import MLDataPreprocessor
 
 from config.config import DATA_PATH
 
@@ -58,9 +59,10 @@ def calculate_psi(
     return psi
 
 # For statistical validation (data drift detection)
-def check_numerical_drift_by_column(
-    reference: pd.Series,
-    current: pd.Series,
+def check_numerical_drift(
+    reference_df: pd.DataFrame,
+    current_df: pd.DataFrame,
+    numeric_columns: List[str],
     threshold: float = 0.1
 ) -> dict:
     """Compare distributions using PSI (Population Stability Index).
@@ -70,22 +72,29 @@ def check_numerical_drift_by_column(
     PSI >= 0.25: Significant change, retrain
     """
     # Simplified drift calculation (Z score)
-    ref_mean, ref_std = reference.mean(), reference.std()
-    curr_mean, curr_std = current.mean(), current.std()
+    drift_report = {}
     
-    mean_shift = abs(curr_mean - ref_mean) / (ref_std + 1e-10)
+    for col in numeric_columns:
+        
+        ref_mean, ref_std = reference_df[col].mean(), reference_df[col].std()
+        curr_mean, curr_std = current_df[col].mean(), current_df[col].std()
+        
+        mean_shift = abs(curr_mean - ref_mean) / (ref_std + 1e-10)
+        
+        # Calculate psi
+        psi = calculate_psi(current=current_df[col], reference=reference_df[col])
+        
+        drift_report[col] = {
+            "mean_shift_zscore": mean_shift,
+            "psi": psi,
+            "drift_detected_zcore": mean_shift > threshold,
+            "drift_detected_psi": psi > threshold,
+            "reference_mean": ref_mean,
+            "current_mean": curr_mean
+        }
     
-    # Calculate psi
-    psi = calculate_psi(current=current, reference=reference)
-    return {
-        "mean_shift_zscore": mean_shift,
-        "psi": psi,
-        "drift_detected_zcore": mean_shift > threshold,
-        "drift_detected_psi": psi > threshold,
-        "reference_mean": ref_mean,
-        "current_mean": curr_mean
-    }
-
+    return drift_report
+    
 def check_categorical_drif(
     reference_df: pd.DataFrame,
     current_df: pd.DataFrame,
@@ -148,7 +157,7 @@ def check_categorical_drif(
 
 def main():
     parser = argparse.ArgumentParser(description="Check data drift")
-    parser.add_argument("--reference", required=True, help="Reference data json path")
+    parser.add_argument("--reference", required=True, help="Reference data csv path")
     parser.add_argument("--current", required=True, help="Current data csv path")
     parser.add_argument("--threshold", type=float, default=0.25, help="psi threshold")
     args = parser.parse_args()
@@ -162,6 +171,8 @@ def main():
     data_loader = MLDataPreprocessor(DATA_PATH)
     current_df = data_loader.load_data()
     
+    reference_df = data_loader.load_data()
+    
     numeric_cols = ['age', 'study_hours', 'class_attendance', 'sleep_hours']
     categorical_cols = ['gender', 'course', 'study_method']
     
@@ -170,9 +181,10 @@ def main():
     # Check numerical drift
     print("Checking numerical drift ...")
     for col in numeric_cols:
-        drift_stats = check_numerical_drift_by_column(
-            current=current_df[col],
-            reference=pd.Series(reference_stats.get(col)),
+        drift_stats = check_numerical_drift(
+            reference_df=reference_df,
+            current_df=current_df,
+            numeric_columns=numeric_cols,
             threshold=args.threshold
         )
         

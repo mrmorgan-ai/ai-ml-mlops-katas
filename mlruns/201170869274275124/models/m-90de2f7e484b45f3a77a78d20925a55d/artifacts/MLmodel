@@ -1,0 +1,22 @@
+artifact_path: file:///C:/Users/jhoni/Documents/LooperAI/repositorios/ai-ml-mlops-katas/mlruns/201170869274275124/models/m-90de2f7e484b45f3a77a78d20925a55d/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.11.12
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.8.0
+mlflow_version: 3.8.1
+model_id: m-90de2f7e484b45f3a77a78d20925a55d
+model_size_bytes: 39236046
+model_uuid: m-90de2f7e484b45f3a77a78d20925a55d
+prompts: null
+run_id: ae7a80a340114bfdac15cef914db34ca
+utc_time_created: '2026-02-02 02:53:34.068502'

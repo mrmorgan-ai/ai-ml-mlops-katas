@@ -33,7 +33,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import mean_squared_error, mean_absolute_error, r2_score
 
-from pipelines.preprocessing import MLDataPreprocessor
+from .preprocessing import MLDataPreprocessor
 from config.config import DEFAULT_MODEL_HYPERPARAMETERS, NUMERIC_FEATURES, CATEGORICAL_FEATURES, DATA_PATH
 
 # Model artifact dataclass
@@ -197,7 +197,7 @@ class ExamScorePipeline:
         """
         return Pipeline([
             ("preprocessor", self.data_preprocessor.build_columns_preprocessor()),
-            ("regressor"), RandomForestRegressor(**self.model_params)
+            ("regressor", RandomForestRegressor(**self.model_params))
         ]) # type: ignore
         
     def train(

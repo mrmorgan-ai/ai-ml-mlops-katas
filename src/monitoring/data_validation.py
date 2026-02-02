@@ -5,7 +5,7 @@ from pandera.errors import SchemaError
 import pandas as pd
 import numpy as np
 
-from preprocessing import MLDataPreprocessor
+from ..pipelines.preprocessing import MLDataPreprocessor
 
 from config.config import DATA_PATH
 
