@@ -1,0 +1,14 @@
+artifact_uri: file:///C:/Users/jhoni/Documents/LooperAI/repositorios/ai-ml-mlops-katas/mlruns/201170869274275124/65a2eafd272c4ec492303f3e1bbf031d/artifacts
+end_time: 1769999802334
+entry_point_name: ''
+experiment_id: '201170869274275124'
+lifecycle_stage: active
+run_id: 65a2eafd272c4ec492303f3e1bbf031d
+run_name: baseline_model
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1769999802255
+status: 3
+tags: []
+user_id: jhoni

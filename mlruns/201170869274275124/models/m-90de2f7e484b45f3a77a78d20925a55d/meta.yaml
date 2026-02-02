@@ -1,0 +1,10 @@
+artifact_location: file:///C:/Users/jhoni/Documents/LooperAI/repositorios/ai-ml-mlops-katas/mlruns/201170869274275124/models/m-90de2f7e484b45f3a77a78d20925a55d/artifacts
+creation_timestamp: 1770000814008
+experiment_id: '201170869274275124'
+last_updated_timestamp: 1770000822218
+model_id: m-90de2f7e484b45f3a77a78d20925a55d
+model_type: null
+name: model
+source_run_id: ae7a80a340114bfdac15cef914db34ca
+status: 2
+status_message: null
